@@ -20,6 +20,7 @@ using System.Collections.Specialized;
 using System.Data.Common;
 using Quartz.Impl;
 using Quartz;
+using System.Configuration;
 
 namespace test
 {
@@ -29,12 +30,13 @@ namespace test
         private GeoCoordinateWatcher watcher = new GeoCoordinateWatcher();
         string latitude = "0";
         string longitute = "0";
-        string OnConnection = @"Data Source=192.168.15.97\SQLEXPRESS;Initial Catalog=test;User ID=sa;Password=admin@123";
+        string OnConnection = "";
         string weather = "";
         int min;
         public Form1()
         {
             InitializeComponent();
+            OnConnection= ConfigurationManager.ConnectionStrings["sqlCon"].ConnectionString;
             loadtimeincombo();
             GetSettings();
 

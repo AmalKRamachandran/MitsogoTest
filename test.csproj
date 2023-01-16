@@ -58,6 +58,7 @@
       <HintPath>F:\Amal\502\Git\ZKLANAPos\lib\Quartz.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
     <Reference Include="System.Management" />
