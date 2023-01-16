@@ -99,7 +99,10 @@ namespace test
                 string ForDate = string.Format("{0:M/d/yyyy}", Forday);
 
                 SqlDataReader dataReader;
-                SqlCommand cmd = new SqlCommand("select [Date],[battery],[device],[wifi],[storage],[weather] from details where  convert(date, Date) = '" + ForDate + "'", con);
+                SqlCommand cmd = new SqlCommand("spGetDetailsByDate", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@ForDate", SqlDbType.VarChar).Value = ForDate;
+               
                 dataReader = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dataReader);
@@ -123,7 +126,8 @@ namespace test
                 }
                 con.Open();
                 SqlDataReader dataReader;
-                SqlCommand cmd = new SqlCommand("select * from properties", con);
+                SqlCommand cmd = new SqlCommand("spGetProperties", con);
+                cmd.CommandType = CommandType.StoredProcedure;
                 dataReader = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
                 dt.Load(dataReader);
@@ -324,6 +328,7 @@ namespace test
             catch(Exception ex)
             {
                 MessageBox.Show("GetWeather"+ ex.Message);
+                lblWeather.Text = weather;
             }
             
             
@@ -405,7 +410,16 @@ namespace test
                 }
                 con.Open();
 
-                SqlCommand cmd = new SqlCommand("insert into details (Date,battery,device,wifi,storage,weather) values (getdate(),'" + lblBattery.Text +"','"+lblOS.Text+"','"+lblWifi.Text +"','"+lblDeviceName.Text + "','"+lblWeather.Text+"')", con);
+                SqlCommand cmd = new SqlCommand("spInsertDetails", con);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+               
+                cmd.Parameters.Add("@bat", SqlDbType.NVarChar).Value = lblBattery.Text;
+                cmd.Parameters.Add("@os", SqlDbType.NVarChar).Value = lblOS.Text;
+                cmd.Parameters.Add("@wifi", SqlDbType.NVarChar).Value = lblWifi.Text;
+                cmd.Parameters.Add("@storage", SqlDbType.NVarChar).Value = lblDeviceName.Text;
+                cmd.Parameters.Add("@wet", SqlDbType.NVarChar).Value = weather;
+
                 cmd.ExecuteNonQuery();
                 con.Close();
                 LoadGrid();
@@ -456,12 +470,15 @@ namespace test
                 {
                     wet = "1";
                 }
-                SqlCommand cmd = new SqlCommand("Update properties set status='"+ comboBoxinterval.SelectedValue.ToString() + "' where id = 1" +
-                                               " Update properties set status='" + bat+ "' where id = 2" +
-                                               " Update properties set status='" + os+ "' where id = 3" +
-                                               " Update properties set status='" + wifi+ "' where id = 4 " +
-                                               " Update properties set status='" + storage+ "' where id = 5 " +
-                                               " Update properties set status='" + wet + "' where id = 6", con);
+                SqlCommand cmd = new SqlCommand("spUpdateProperties", con);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add("@Inv", SqlDbType.VarChar).Value = comboBoxinterval.SelectedValue.ToString();
+                cmd.Parameters.Add("@bat", SqlDbType.VarChar).Value = bat;
+                cmd.Parameters.Add("@os", SqlDbType.VarChar).Value = os;
+                cmd.Parameters.Add("@wifi", SqlDbType.VarChar).Value = wifi;
+                cmd.Parameters.Add("@storage", SqlDbType.VarChar).Value = storage;
+                cmd.Parameters.Add("@wet", SqlDbType.VarChar).Value = wet;
                 cmd.ExecuteNonQuery();
                 con.Close();
                 MessageBox.Show("Updated Successfully ");
